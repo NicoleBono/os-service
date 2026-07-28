@@ -42,6 +42,11 @@ jobs:
       - name: Instalar dependências
         run: npm ci
 
+      - name: Rodar migrations do banco
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/os_test
+        run: npx prisma migrate deploy
+
       - name: Rodar testes unitários (cobertura ≥80%)
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/os_test
