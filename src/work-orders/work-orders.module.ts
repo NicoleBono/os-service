@@ -8,8 +8,10 @@ import { GetWorkOrderStatusUseCase } from "./application/use-cases/get-work-orde
 import { ApproveBudgetNotificationUseCase } from "./application/use-cases/approve-budget-notification.use-case";
 import { UpdateWorkOrderStatusFromEmailUseCase } from "./application/use-cases/update-work-order-status-from-email.use-case";
 import { WorkOrdersController } from "./infra/controllers/work-orders.controller";
+import { SagaPublisherModule } from "../saga/saga-publisher.module";
 
 @Module({
+  imports: [SagaPublisherModule],
   controllers: [WorkOrdersController],
   providers: [
     WorkOrdersService,
