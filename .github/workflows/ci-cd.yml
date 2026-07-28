@@ -16,12 +16,16 @@ jobs:
     name: Testes
     runs-on: ubuntu-latest
     services:
-      mongo:
+      postgres:
         image: postgres:16-alpine
         ports:
           - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: os_test
         options: >-
-          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-cmd "pg_isready -U postgres"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -40,13 +44,13 @@ jobs:
 
       - name: Rodar testes unitários (cobertura ≥80%)
         env:
-          DATABASE_URL: postgres://localhost:27017/os_test
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/os_test
           JWT_SECRET: test-secret
         run: npm run test:coverage
 
       - name: Rodar testes BDD
         env:
-          DATABASE_URL: postgres://localhost:27017/os_test
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/os_test
           JWT_SECRET: test-secret
         run: npm run test:bdd
 
