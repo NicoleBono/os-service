@@ -21,7 +21,8 @@
     "test:bdd": "cucumber-js test/bdd/features/**/*.feature --require test/bdd/steps/**/*.ts --require-module ts-node/register"
   },
   "dependencies": {
-    "@golevelup/nestjs-rabbitmq": "^9.0.2",
+    "@aws-sdk/client-sns": "^3.1097.0",
+    "@aws-sdk/client-sqs": "^3.1097.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/jwt": "^11.0.2",
@@ -29,7 +30,6 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.4.4",
     "@prisma/client": "^6.19.3",
-    "amqplib": "^2.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "passport": "^0.7.0",
