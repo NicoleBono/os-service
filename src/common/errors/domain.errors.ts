@@ -1,3 +1,5 @@
+export class DomainError extends Error {}
+
 export class BusinessRuleError extends Error {
   constructor(message: string) {
     super(message);
