@@ -11,11 +11,9 @@ enum OrderStatus {
   RECEBIDA
   EM_DIAGNOSTICO
   AGUARDANDO_APROVACAO
-  APROVADA
   EM_EXECUCAO
   FINALIZADA
   ENTREGUE
-  CANCELADA
 }
 
 model Customer {
@@ -43,13 +41,36 @@ model Vehicle {
   updatedAt  DateTime    @updatedAt
 }
 
+model ServiceCatalog {
+  id                   Int                @id @default(autoincrement())
+  name                 String
+  description          String
+  basePrice            Decimal            @db.Decimal(10, 2)
+  estimatedTimeMinutes Int
+  workOrderServices    WorkOrderService[]
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+}
+
+model Part {
+  id            Int            @id @default(autoincrement())
+  name          String
+  description   String
+  unitPrice     Decimal        @db.Decimal(10, 2)
+  stockQuantity Int
+  workOrderParts WorkOrderPart[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
 model WorkOrder {
-  id          Int         @id @default(autoincrement())
-  customerId  Int
-  vehicleId   Int
-  status      OrderStatus @default(RECEBIDA)
-  totalAmount Decimal     @db.Decimal(10, 2) @default(0)
-  description String?
+  id            Int              @id @default(autoincrement())
+  customerId    Int
+  vehicleId     Int
+  status        OrderStatus      @default(RECEBIDA)
+  totalServices Decimal          @db.Decimal(10, 2) @default(0)
+  totalParts    Decimal          @db.Decimal(10, 2) @default(0)
+  totalAmount   Decimal          @db.Decimal(10, 2) @default(0)
 
   budgetSentAt       DateTime?
   approvedAt         DateTime?
@@ -57,11 +78,30 @@ model WorkOrder {
   startedExecutionAt DateTime?
   finishedAt         DateTime?
   deliveredAt        DateTime?
-  cancelledAt        DateTime?
 
-  customer Customer @relation(fields: [customerId], references: [id])
-  vehicle  Vehicle  @relation(fields: [vehicleId], references: [id])
+  customer Customer          @relation(fields: [customerId], references: [id])
+  vehicle  Vehicle           @relation(fields: [vehicleId], references: [id])
+  services WorkOrderService[]
+  parts    WorkOrderPart[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model WorkOrderService {
+  id          Int            @id @default(autoincrement())
+  workOrderId Int
+  serviceId   Int
+  quantity    Int            @default(1)
+  workOrder   WorkOrder      @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  service     ServiceCatalog @relation(fields: [serviceId], references: [id])
+}
+
+model WorkOrderPart {
+  id          Int       @id @default(autoincrement())
+  workOrderId Int
+  partId      Int
+  quantity    Int       @default(1)
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  part        Part      @relation(fields: [partId], references: [id])
 }

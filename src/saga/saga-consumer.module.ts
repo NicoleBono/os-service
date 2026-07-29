@@ -8,16 +8,19 @@ import { PaymentFailedHandler } from './handlers/payment-failed.handler';
 import { ExecutionCompletedHandler } from './handlers/execution-completed.handler';
 import { SagaPublisherModule } from './saga-publisher.module';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const handlers: any[] = [
-  { provide: SAGA_EVENT_HANDLER, useClass: BudgetGeneratedHandler, multi: true },
-  { provide: SAGA_EVENT_HANDLER, useClass: PaymentConfirmedHandler, multi: true },
-  { provide: SAGA_EVENT_HANDLER, useClass: PaymentFailedHandler, multi: true },
-  { provide: SAGA_EVENT_HANDLER, useClass: ExecutionCompletedHandler, multi: true },
-];
-
 @Module({
   imports: [PrismaModule, SagaPublisherModule],
-  providers: [SagaConsumerService, ...handlers],
+  providers: [
+    BudgetGeneratedHandler,
+    PaymentConfirmedHandler,
+    PaymentFailedHandler,
+    ExecutionCompletedHandler,
+    {
+      provide: SAGA_EVENT_HANDLER,
+      useFactory: (h1: BudgetGeneratedHandler, h2: PaymentConfirmedHandler, h3: PaymentFailedHandler, h4: ExecutionCompletedHandler) => [h1, h2, h3, h4],
+      inject: [BudgetGeneratedHandler, PaymentConfirmedHandler, PaymentFailedHandler, ExecutionCompletedHandler],
+    },
+    SagaConsumerService,
+  ],
 })
 export class SagaConsumerModule {}
