@@ -1,25 +1,24 @@
 import { Given, When, Then, Before } from '@cucumber/cucumber';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import * as assert from 'assert';
 
-let module: TestingModule;
+let testingModule: any;
 let workOrder: any;
 let publishedEvent: string | null = null;
 
 const mockRepository = {
-  open: jest.fn().mockResolvedValue({ id: 1, status: 'RECEBIDA' }),
-  approveBudget: jest.fn().mockResolvedValue({ id: 1, status: 'APROVADA' }),
+  open: async () => ({ id: 1, status: 'RECEBIDA' }),
+  approveBudget: async () => ({ id: 1, status: 'APROVADA' }),
 };
 
 const mockSagaPublisher = {
-  publish: jest.fn().mockImplementation(async (eventType: string) => {
+  publish: async (eventType: string) => {
     publishedEvent = eventType;
-  }),
+  },
 };
 
 Before(async () => {
   publishedEvent = null;
-  jest.clearAllMocks();
 });
 
 Given('que existe um cliente com CPF {string}', (_cpf: string) => {
@@ -35,7 +34,7 @@ When('o atendente abre uma OS para o veículo {string}', async (_plate: string) 
   const { WorkOrderRepository } = await import('../../../src/work-orders/domain/repositories/work-order.repository');
   const { SagaPublisherService } = await import('../../../src/saga/publisher/saga-publisher.service');
 
-  module = await Test.createTestingModule({
+  testingModule = await Test.createTestingModule({
     providers: [
       OpenWorkOrderUseCase,
       { provide: WorkOrderRepository, useValue: mockRepository },
@@ -43,7 +42,7 @@ When('o atendente abre uma OS para o veículo {string}', async (_plate: string) 
     ],
   }).compile();
 
-  const useCase = module.get(OpenWorkOrderUseCase);
+  const useCase = testingModule.get(OpenWorkOrderUseCase);
   workOrder = await useCase.execute({
     vehicleId: 1,
     services: [],
@@ -74,7 +73,6 @@ Then('a OS deve ter status {string}', (status: string) => {
 });
 
 Then('o campo {string} deve estar preenchido', (_field: string) => {
-  // validated via handler unit tests
   assert.ok(true);
 });
 
