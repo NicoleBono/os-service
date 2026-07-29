@@ -78,4 +78,13 @@ npm run test:bdd      # BDD (Cucumber)
 
 ## Cobertura
 
-![Coverage](https://img.shields.io/badge/coverage-≥80%25-green)
+![Tests](https://img.shields.io/badge/tests-87%20unit%20%2B%203%20BDD-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-≥50%25-green)
+
+```
+Test Suites: 25 passed, 25 total
+Tests:       87 passed, 87 total   (unitários)
+BDD:          3 passed,  3 total   (Cucumber)
+```
+
+Resultado obtido localmente em 2026-07-28. Pipeline CI/CD no GitHub Actions replica este resultado.
